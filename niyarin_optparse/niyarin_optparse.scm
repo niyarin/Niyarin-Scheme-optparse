@@ -52,9 +52,10 @@
 
             (let loop ((ps (car positional-state)))
               (unless (null? ps)
-                  (let ((default (assv 'default (car ps))))
+                  (let ((default (assv 'default (car ps)))
+                        (nargs (cond ((assv 'nargs (cdr (car ps))) => cadr) (else 1))))
                     (cond
-                      ((and (not default) (not (eqv? (state-nargs positional-state) '*))) (error "not match" (caar ps)))
+                      ((and (not default) (not (eqv? nargs '*))) (error "not match" (caar ps)))
                       ((not default) '())
                       (else (set! res (cons (list (caar ps)(cadr default)) res))))
                   (loop (cdr ps)))))
