@@ -42,7 +42,8 @@
 
 
           (define (loop-end input res positional-state optional-state)
-            (when (not (null? (cdr (state-values positional-state))))
+            (when (and (not (null? (state-values positional-state)))
+                       (not (null? (cdr (state-values positional-state)))))
                   (unless (or (state-nargs-zero? positional-state)
                                (eqv? (state-nargs positional-state) '*))
                      (error "not match" (caaar positional-state)))
@@ -76,7 +77,11 @@
 
           (let loop ((input input)
                      (res '())
-                     (positional-state (state-create-new-state (car positional-arguments) (cdr positional-arguments) 1));current positional-argument, nargs ,default , values
+                     (positional-state
+                       (if (null? positional-arguments)
+                         (list '() '() '() '())
+                         (state-create-new-state (car positional-arguments) (cdr positional-arguments) 1));current positional-argument, nargs ,default , values
+                       )
                      (optional-state (list #f #f #f #f)));current optional-argument , nargs ,default , values
             (if (null? input)
               (loop-end input res positional-state optional-state)
