@@ -46,7 +46,7 @@
                        (not (null? (cdr (state-values positional-state)))))
                   (unless (or (state-nargs-zero? positional-state)
                                (eqv? (state-nargs positional-state) '*))
-                     (error "not match" (caaar positional-state)))
+                     (error "not match" (car (reverse (cadddr positional-state)))))
                   (set! res (cons (reverse (state-values positional-state)) res))
                   (when (not (null? (car positional-state)))
                      (set-car! positional-state (cdar positional-state))))
