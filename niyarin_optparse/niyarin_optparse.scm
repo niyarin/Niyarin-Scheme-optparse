@@ -90,6 +90,20 @@
                   ((and is-optional 
                         (not (state-current-argument optional-state)))
                     (loop (cdr input) res positional-state (state-create-new-state is-optional (car is-optional))))
+                  ((and  (>= (string-length (car input)) 3)
+                         (char=? (string-ref (car input) 0) #\-)
+                         (not (char=? (string-ref (car input) 1) #\-))
+                         (assoc (string #\- (string-ref (car input ) 1))
+                                optional-arguments string=?))
+                   => (lambda (is-optional)
+                        (loop (cons
+                                (substring (car input) 2 (string-length (car input)))
+                                (cdr input))
+                              res
+                              positional-state
+                              (state-create-new-state
+                                is-optional
+                                (car is-optional)))))
                   
                   ((or (and (integer? (state-nargs optional-state))
                             (> (state-nargs optional-state) 0)
