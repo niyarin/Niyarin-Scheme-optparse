@@ -40,16 +40,31 @@
 
               (list-set! state 3 (cons val vals))))
 
+          (define (restore-current-argument! option)
+               (let ((argument-data 
+                       `(,(car (state-values option)) 
+                         ,(list 'nargs (state-nargs option)) 
+                         .
+                         ,(if (state-default option) (list (list 'default (car (state-default option)))) '() ))))
+                 (set-car! option (cons argument-data (car option)))
+                 (set-car! (cdr option) 0)
+                 (set-car! (cddr option) #f)
+                 (set-car! (cdddr option) '())))
 
           (define (loop-end input res positional-state optional-state)
             (when (and (not (null? (state-values positional-state)))
                        (not (null? (cdr (state-values positional-state)))))
+
                   (unless (or (state-nargs-zero? positional-state)
                                (eqv? (state-nargs positional-state) '*))
                      (error "not match" (car (reverse (cadddr positional-state)))))
                   (set! res (cons (reverse (state-values positional-state)) res))
                   (when (not (null? (car positional-state)))
                      (set-car! positional-state (cdar positional-state))))
+
+            (when (null? (cdr (state-values positional-state)))
+               (restore-current-argument! positional-state))
+
             (let loop ((ps (car positional-state)))
               (unless (null? ps)
                   (let ((default (assv 'default (car ps)))
