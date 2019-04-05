@@ -188,9 +188,12 @@
                  )))))
                      
 
-        (define (niyarin-optparse-optparse option)
+        (define (niyarin-optparse-optparse option . opt-input)
           (let-values (((optional-arguments positional-arguments) (check-optparse-option option)))
-             (let ((input (cdr (command-line))))
+             (let ((input 
+                     (if (null? opt-input)
+                       (cdr (command-line))
+                       (car opt-input))))
                (optparse-aux input optional-arguments positional-arguments))))
 
 
