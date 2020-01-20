@@ -5,27 +5,24 @@
         (niyarin optparse))
 
 (define (print-help option)
-  (display  (niyarin-optparse-generate-help-text option '(program-name "test program"))))
+  (display  (niyarin-optparse/generate-help-text option '(program-name "test program"))))
 
 (define (run option)
   (display "do something")
   (newline)
   (write option)
-  (newline)
-  )
+  (newline))
 
 (define (main)
    (let ((cmd-option
            '(("--help" "-h" (help "Display a help message and exit."))
-             ("--foo" (destination "INPUT") (nargs 1) (help "foooooooooooooo"))
+             ("--foo" "-f" (destination "INPUT") (nargs 1) (help "foooooooooooooo"))
              ("--foo2" (destination "INPUT") (nargs *))
              ("--foo3 " (nargs 3))
-             ("files" (nargs *))
-             )))
-     (let ((parsed-option (niyarin-optparse-optparse cmd-option)))
+             ("files" (nargs *)))))
+     (let ((parsed-option (niyarin-optparse/optparse cmd-option '("--help"))))
        (if (assoc "--help" parsed-option string=?)
          (print-help cmd-option)
-         (run parsed-option)
-         ))))
+         (run parsed-option)))))
 
 (main)
